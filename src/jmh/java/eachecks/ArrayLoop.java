@@ -63,4 +63,34 @@ public class ArrayLoop {
     public void wrappedLoopSum(Blackhole bh) {
         bh.consume(new ArrayWrapper(next(), next()).loopSum());
     }
+
+    // simple loop based sum, can be any variation - for(i:arr), for(i=0; i<... etc...
+    static int explicitArrayLoop(int[] arr) {
+        int sum = 0;
+        for (int i: arr) { sum+=i;}
+        return sum;
+    }
+
+    @Benchmark
+    public void explicitArrayLoop(Blackhole bh) {
+        bh.consume(explicitArrayLoop(new int[]{next(), next()}));
+    }
+
+    // silly manually unrolled loop
+    static int explicitArrayUnrolled(int[] arr) {
+        int sum = 0;
+        switch (arr.length) {
+            default: for (int i = arr.length - 1; i >= 4; sum += arr[i--]) { ; }
+            case 4: sum += arr[3];
+            case 3: sum += arr[2];
+            case 2: sum += arr[1];
+            case 1: sum += arr[0];
+        }
+        return sum;
+    }
+
+    @Benchmark
+    public void explicitArrayUnrolled(Blackhole bh) {
+        bh.consume(explicitArrayUnrolled(new int[]{next(), next()}));
+    }
 }
